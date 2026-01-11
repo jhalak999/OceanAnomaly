@@ -13,4 +13,4 @@ df.to_csv(
     index=False
 )
 
-print("✅ NOAA cleaned features saved")
+print("noaa cleaned features saved")

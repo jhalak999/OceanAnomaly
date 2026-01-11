@@ -11,7 +11,7 @@ for f in features:
     plt.plot(df["valid_time"], df[f], label=f)
 
 plt.legend()
-plt.title("ERA5 Climate Drivers – Monthly Trends (1981–2024)")
+plt.title("ERA5 Climate Drivers - Monthly Trends (1981-2024)")
 plt.xlabel("Time")
 plt.ylabel("Value")
 plt.show()

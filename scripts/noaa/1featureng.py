@@ -16,4 +16,4 @@ df.to_csv(
     index=False
 )
 
-print("✅ NOAA feature engineering completed")
+print("noaa feature engineering completed")

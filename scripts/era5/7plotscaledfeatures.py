@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Load scaled TRAIN set
+# loading scaled train set
 df = pd.read_csv("train_features_scaled.csv", parse_dates=["valid_time"])
 df = df.set_index("valid_time")
 

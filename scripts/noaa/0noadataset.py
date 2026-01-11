@@ -4,34 +4,33 @@ from pathlib import Path
 import requests
 import re
 
-# ================= USER CONTROL =================
+
 START_YEAR = 1981
 END_YEAR = 2024
-# ===============================================
+
 
 out_dir = Path("noaa/outputs")
 out_dir.mkdir(parents=True, exist_ok=True)
 
 url = "https://psl.noaa.gov/data/correlation/oni.data"
 
-print(f"📡 Extracting NOAA ONI data for years {START_YEAR}–{END_YEAR}")
+print(f"Extracting noaa oni data for years {START_YEAR} to {END_YEAR}")
 
-# ------------------------------------------------
-# 1. DOWNLOAD FILE AS TEXT
-# ------------------------------------------------
+
+# 1. download the file as text
 text = requests.get(url, timeout=30).text
 lines = text.splitlines()
 
-# ------------------------------------------------
-# 2. MANUALLY PARSE VALID DATA ROWS
-# ------------------------------------------------
+
+# 2. manually parsing valid data rows
+
 records = []
 
 for line in lines:
-    # keep only lines starting with 4-digit year
+    # keeping only lines starting with 4 digit year
     if re.match(r"^\s*\d{4}\s+", line):
         parts = line.split()
-        if len(parts) == 13:   # Year + 12 seasons
+        if len(parts) == 13:   # year + 12 seasons
             year = int(parts[0])
             if START_YEAR <= year <= END_YEAR:
                 records.append(parts)
@@ -40,9 +39,9 @@ for line in lines:
 if not records:
     raise RuntimeError("No valid ONI records found after parsing")
 
-# ------------------------------------------------
-# 3. CREATE DATAFRAME
-# ------------------------------------------------
+
+# 3. create dataframe
+
 columns = [
     "YR", "DJF", "JFM", "FMA", "MAM", "AMJ",
     "MJJ", "JJA", "JAS", "ASO", "SON", "OND", "NDJ"
@@ -51,11 +50,11 @@ columns = [
 oni = pd.DataFrame(records, columns=columns).astype(float)
 oni["YR"] = oni["YR"].astype(int)
 
-print(f"✅ Years retained: {oni['YR'].min()} – {oni['YR'].max()}")
+print(f"Years retained: {oni['YR'].min()} to {oni['YR'].max()}")
 
-# ------------------------------------------------
-# 4. SEASON → MONTH
-# ------------------------------------------------
+
+# 4. SEASON to MONTH
+
 season_map = {
     "DJF": 1, "JFM": 2, "FMA": 3, "MAM": 4,
     "AMJ": 5, "MJJ": 6, "JJA": 7, "JAS": 8,
@@ -78,9 +77,9 @@ oni_long["time"] = pd.to_datetime(
 
 oni_long = oni_long.sort_values("time")
 
-# ------------------------------------------------
-# 5. SAVE OUTPUTS
-# ------------------------------------------------
+
+# 5. save the outputs
+
 oni_long[["time", "oni"]].to_csv(
     out_dir / "noaa_oni_monthly.csv",
     index=False
@@ -93,4 +92,4 @@ ds = xr.Dataset(
 
 ds.to_netcdf(out_dir / "noaa_oni_monthly.nc")
 
-print("🎉 NOAA ONI extraction complete (manual parsing, robust)")
+print("noaa oni extraction complete ")
