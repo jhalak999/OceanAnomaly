@@ -9,9 +9,17 @@ final_dir = BASE_DIR / "dataset/final"
 
 # Load data
 X_train = pd.read_csv(final_dir / "X_train.csv")
-y_train = pd.read_csv(final_dir / "y_train.csv").values.ravel()
 X_test  = pd.read_csv(final_dir / "X_test.csv")
+y_train = pd.read_csv(final_dir / "y_train.csv").values.ravel()
 y_test  = pd.read_csv(final_dir / "y_test.csv").values.ravel()
+
+# 🔥 KEEP ONLY NUMERIC FEATURES
+X_train = X_train.select_dtypes(include=["number"])
+X_test  = X_test.select_dtypes(include=["number"])
+
+y_train = y_train.astype(float)
+y_test = y_test.astype(float)
+
 
 # Train simple model again (baseline)
 model = LinearRegression()
@@ -40,4 +48,4 @@ plt.show()
 sm.graphics.tsa.plot_acf(residuals, lags=40)
 plt.show()
 
-print("Residual diagnostics completed")
+print("✅ Residual diagnostics completed")
